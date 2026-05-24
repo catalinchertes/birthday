@@ -62,7 +62,12 @@ const section3gifts     = document.getElementById('section3-gifts');
 
 // ── Scroll ──
 function scrollToBottom() {
-  setTimeout(() => confirmBtn.scrollIntoView({ behavior: 'smooth', block: 'end' }), 150);
+  setTimeout(() => {
+    window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: 'smooth'
+    });
+  }, 150);
 }
 
 // ── Validación ──
