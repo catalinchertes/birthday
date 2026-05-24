@@ -46,44 +46,88 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.15 });
 document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
 
-// ── RSVP ──
-const rsvpYes       = document.getElementById('rsvp-yes');
-const rsvpNo        = document.getElementById('rsvp-no');
-const labelYes      = document.getElementById('label-yes');
-const labelNo       = document.getElementById('label-no');
-const rsvpExtra     = document.getElementById('rsvpExtra');
-const rsvpHand      = document.getElementById('rsvpHand');
-const rsvpName      = document.getElementById('rsvpName');
-const companionYes  = document.getElementById('companion-yes');
-const companionNo   = document.getElementById('companion-no');
-const labelWithYes  = document.getElementById('label-with-yes');
-const labelWithNo   = document.getElementById('label-with-no');
-const guestsWrapper = document.getElementById('rsvpGuestsWrapper');
-const rsvpGuests    = document.getElementById('rsvpGuests');
-const confirmBtn    = document.getElementById('rsvpConfirmBtn');
-const section3      = document.getElementById('section3');
-const confirmTitle  = document.getElementById('confirmTitle');
-const confirmMsg    = document.getElementById('confirmMsg');
-const confirmIcon   = document.getElementById('confirmIcon');
-const section3gifts = document.getElementById('section3-gifts');
+// ── Referencias DOM ──
+const rsvpYes           = document.getElementById('rsvp-yes');
+const rsvpNo            = document.getElementById('rsvp-no');
+const labelYes          = document.getElementById('label-yes');
+const labelNo           = document.getElementById('label-no');
+const rsvpExtra         = document.getElementById('rsvpExtra');
+const rsvpHand          = document.getElementById('rsvpHand');
+const rsvpName          = document.getElementById('rsvpName');
+const companionYes      = document.getElementById('companion-yes');
+const companionNo       = document.getElementById('companion-no');
+const labelWithYes      = document.getElementById('label-with-yes');
+const labelWithNo       = document.getElementById('label-with-no');
+const guestsWrapper     = document.getElementById('rsvpGuestsWrapper');
+const rsvpGuests        = document.getElementById('rsvpGuests');
+const confirmBtn        = document.getElementById('rsvpConfirmBtn');
+const rsvpForm          = document.getElementById('rsvpForm');
+const rsvpConfirmedMsg  = document.getElementById('rsvpConfirmedMsg');
+const rsvpConfirmedIcon = document.getElementById('rsvpConfirmedIcon');
+const rsvpConfirmedText = document.getElementById('rsvpConfirmedText');
+const rsvpGiftsLink     = document.getElementById('rsvpGiftsLink');
+const section3          = document.getElementById('section3');
+const confirmTitle      = document.getElementById('confirmTitle');
+const confirmMsg        = document.getElementById('confirmMsg');
+const confirmIcon       = document.getElementById('confirmIcon');
+const section3gifts     = document.getElementById('section3-gifts');
+
+// ── Helpers ──
+function scrollToElement(el) {
+  setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 80);
+}
 
 function validateForm() {
   if (!rsvpYes.checked && !rsvpNo.checked) { confirmBtn.disabled = true; return; }
-  if (rsvpNo.checked)  { confirmBtn.disabled = false; return; }
+  if (rsvpNo.checked) { confirmBtn.disabled = false; return; }
   const hasName      = rsvpName.value.trim().length > 0;
   const hasCompanion = companionYes.checked || companionNo.checked;
   const hasGuests    = companionYes.checked ? rsvpGuests.value !== '' : true;
   confirmBtn.disabled = !(hasName && hasCompanion && hasGuests);
 }
 
+function applyConfirmedState(data) {
+  rsvpForm.style.display = 'none';
+  rsvpConfirmedMsg.classList.add('visible');
+  section3.classList.add('unlocked');
+  section3.setAttribute('aria-hidden', 'false');
+
+  if (data.attending) {
+    rsvpHand.src                  = 'mickeyhappy.png';
+    rsvpConfirmedIcon.textContent = '🎉';
+    rsvpConfirmedText.innerHTML   = `Confirmat! Ne vedem pe <strong>${data.name}</strong> pe 27 iunie. 🎂`;
+    rsvpGiftsLink.classList.remove('hidden');
+    confirmIcon.textContent     = '🎉';
+    confirmTitle.textContent    = 'Ne bucurăm că vii!';
+    confirmMsg.innerHTML        = `Te așteptăm pe <strong>${data.name}</strong> pe 27 iunie la ora 14:00 la Consist Parc.<br/>Pregătește-te pentru tort, baloane și multă iubire! 🎂`;
+    section3gifts.style.display = 'block';
+  } else {
+    rsvpHand.src                  = 'mickeysad.png';
+    rsvpConfirmedIcon.textContent = '😢';
+    rsvpConfirmedText.innerHTML   = 'Înțelegem, ne pare rău că nu poți veni. Îți trimitem gânduri bune! 💙';
+    rsvpGiftsLink.classList.add('hidden');
+    confirmIcon.textContent     = '😢';
+    confirmTitle.textContent    = 'Ne pare rău că nu poți veni!';
+    confirmMsg.innerHTML        = 'Îți trimitem gânduri bune și sperăm să ne vedem cu altă ocazie. 💙';
+    section3gifts.style.display = 'none';
+  }
+}
+
+// ── Restaurar estado tras F5 (localStorage) ──
+const savedRSVP = localStorage.getItem('brianRSVP');
+if (savedRSVP) {
+  applyConfirmedState(JSON.parse(savedRSVP));
+}
+
+// ── Eventos RSVP ──
 rsvpYes.addEventListener('change', () => {
   labelYes.classList.add('selected-yes');
   labelYes.classList.remove('selected-no');
   labelNo.classList.remove('selected-no', 'selected-yes');
   rsvpExtra.classList.add('visible');
-  rsvpHand.classList.remove('state-no');
-  rsvpHand.classList.add('state-yes');
+  rsvpHand.src = 'mickeyhappy.png';
   validateForm();
+  scrollToElement(rsvpExtra);
 });
 
 rsvpNo.addEventListener('change', () => {
@@ -91,9 +135,9 @@ rsvpNo.addEventListener('change', () => {
   labelNo.classList.remove('selected-yes');
   labelYes.classList.remove('selected-yes', 'selected-no');
   rsvpExtra.classList.remove('visible');
-  rsvpHand.classList.remove('state-yes');
-  rsvpHand.classList.add('state-no');
+  rsvpHand.src = 'mickeysad.png';
   validateForm();
+  scrollToElement(confirmBtn);
 });
 
 companionYes.addEventListener('change', () => {
@@ -101,6 +145,7 @@ companionYes.addEventListener('change', () => {
   labelWithNo.classList.remove('selected-yes');
   guestsWrapper.classList.add('visible');
   validateForm();
+  scrollToElement(guestsWrapper);
 });
 
 companionNo.addEventListener('change', () => {
@@ -109,6 +154,7 @@ companionNo.addEventListener('change', () => {
   guestsWrapper.classList.remove('visible');
   rsvpGuests.value = '';
   validateForm();
+  scrollToElement(confirmBtn);
 });
 
 rsvpName.addEventListener('input', validateForm);
@@ -116,27 +162,21 @@ rsvpGuests.addEventListener('change', validateForm);
 
 // ── Confirmar ──
 confirmBtn.addEventListener('click', () => {
-  const attending = rsvpYes.checked;
-  const name      = rsvpName.value.trim();
-
-  if (attending) {
-    confirmIcon.textContent  = '🎉';
-    confirmTitle.textContent = 'Ne bucurăm că vii!';
-    confirmMsg.innerHTML     = `Te așteptăm pe <strong>${name}</strong> pe 27 iunie la ora 14:00 la Consist Parc.<br/>Pregătește-te pentru tort, baloane și multă iubire! 🎂`;
-    section3gifts.style.display = 'block';
-  } else {
-    confirmIcon.textContent     = '😢';
-    confirmTitle.textContent    = 'Ne pare rău că nu poți veni!';
-    confirmMsg.innerHTML        = 'Îți trimitem gânduri bune și sperăm să ne vedem cu altă ocazie. 💙';
-    section3gifts.style.display = 'none';
-  }
-
-  section3.classList.add('unlocked');
-  section3.setAttribute('aria-hidden', 'false');
-  setTimeout(() => section3.scrollIntoView({ behavior: 'smooth' }), 100);
+  const data = {
+    attending: rsvpYes.checked,
+    name: rsvpName.value.trim()
+  };
+  localStorage.setItem('brianRSVP', JSON.stringify(data));
+  applyConfirmedState(data);
 });
 
-// ── Bloquear acceso directo a sección 3 ──
+// ── Botón "Ver lista" -> scroll a sección 3 ──
+rsvpGiftsLink.addEventListener('click', (e) => {
+  e.preventDefault();
+  section3.scrollIntoView({ behavior: 'smooth' });
+});
+
+// ── Bloquear acceso directo a sección 3 por hash ──
 window.addEventListener('hashchange', () => {
   if (window.location.hash === '#section3' && !section3.classList.contains('unlocked')) {
     window.location.hash = '#section2';
