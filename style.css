@@ -780,9 +780,3 @@ body::before {
   .secondary-img-wrapper { height: 90px; }
   .gift-cta-btn   { font-size: 0.95rem; padding: 10px 12px; }
            }
-/* Forzar visibilidad por si el observer falla */
-.section-1 .content-card,
-.section-2 .content-card {
-  opacity: 1 !important;
-  transform: none !important;
-}
