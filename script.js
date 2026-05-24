@@ -77,7 +77,7 @@ function scrollToBottom() {
     const rect = confirmBtn.getBoundingClientRect();
     const absoluteTop = window.pageYOffset + rect.bottom;
     window.scrollTo({
-      top: absoluteTop - window.innerHeight + 80,
+      top: absoluteTop - window.innerHeight + 800,
       behavior: 'smooth'
     });
   }, 150);
