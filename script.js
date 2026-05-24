@@ -175,12 +175,13 @@ confirmBtn.addEventListener('click', () => {
   const data = { attending: rsvpYes.checked, name: rsvpName.value.trim() };
   localStorage.setItem('brianRSVP', JSON.stringify(data));
   applyConfirmedState(data);
+  // Aumenta el delay a 400ms para que section3 pase a display:flex antes del scroll
   setTimeout(() => {
     window.scrollTo({
       top: document.body.scrollHeight,
       behavior: 'smooth'
     });
-  }, 200);
+  }, 400);
 });
 
 // ── Botón "Vezi lista de cadouri" ──
