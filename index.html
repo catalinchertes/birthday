@@ -103,65 +103,77 @@
       <div class="rsvp-block animate-on-scroll">
 
         <div class="rsvp-img-wrapper">
-          <img src="hand.png" alt="RSVP" class="rsvp-hand" id="rsvpHand" />
+          <img src="mickeywelcome.png" alt="RSVP" class="rsvp-hand" id="rsvpHand" />
         </div>
 
-        <div class="rsvp-radio-group">
-          <label class="rsvp-radio-btn" id="label-yes">
-            <input type="radio" name="rsvp" value="yes" id="rsvp-yes" />
-            <span>✅ Voi veni!</span>
-          </label>
-          <label class="rsvp-radio-btn" id="label-no">
-            <input type="radio" name="rsvp" value="no" id="rsvp-no" />
-            <span>❌ Nu pot veni</span>
-          </label>
-        </div>
+        <!-- Panel formulario -->
+        <div id="rsvpForm">
+          <div class="rsvp-radio-group">
+            <label class="rsvp-radio-btn" id="label-yes">
+              <input type="radio" name="rsvp" value="yes" id="rsvp-yes" />
+              <span>✅ Voi veni!</span>
+            </label>
+            <label class="rsvp-radio-btn" id="label-no">
+              <input type="radio" name="rsvp" value="no" id="rsvp-no" />
+              <span>❌ Nu pot veni</span>
+            </label>
+          </div>
 
-        <div class="rsvp-extra" id="rsvpExtra">
-          <input
-            type="text"
-            class="rsvp-input"
-            id="rsvpName"
-            placeholder="Numele tău 👤"
-            maxlength="60"
-          />
+          <div class="rsvp-extra" id="rsvpExtra">
+            <input
+              type="text"
+              class="rsvp-input"
+              id="rsvpName"
+              placeholder="Numele tău 👤"
+              maxlength="60"
+            />
 
-          <div class="rsvp-companion-group">
-            <span class="rsvp-companion-label">Vii însoțit/ă?</span>
-            <div class="rsvp-radio-group rsvp-radio-group--small">
-              <label class="rsvp-radio-btn rsvp-radio-btn--small" id="label-with-yes">
-                <input type="radio" name="companion" value="yes" id="companion-yes" />
-                <span>Da</span>
-              </label>
-              <label class="rsvp-radio-btn rsvp-radio-btn--small" id="label-with-no">
-                <input type="radio" name="companion" value="no" id="companion-no" />
-                <span>Nu</span>
-              </label>
+            <div class="rsvp-companion-group">
+              <span class="rsvp-companion-label">Vii însoțit/ă?</span>
+              <div class="rsvp-radio-group rsvp-radio-group--small">
+                <label class="rsvp-radio-btn rsvp-radio-btn--small" id="label-with-yes">
+                  <input type="radio" name="companion" value="yes" id="companion-yes" />
+                  <span>Da</span>
+                </label>
+                <label class="rsvp-radio-btn rsvp-radio-btn--small" id="label-with-no">
+                  <input type="radio" name="companion" value="no" id="companion-no" />
+                  <span>Nu</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="rsvp-guests-wrapper" id="rsvpGuestsWrapper">
+              <label class="rsvp-guests-label" for="rsvpGuests">Câte persoane te însoțesc?</label>
+              <select class="rsvp-select" id="rsvpGuests">
+                <option value="">-- Selectează --</option>
+                <option value="1">1 persoană</option>
+                <option value="2">2 persoane</option>
+                <option value="3">3 persoane</option>
+                <option value="4">4 persoane</option>
+                <option value="5">5+ persoane</option>
+              </select>
             </div>
           </div>
 
-          <div class="rsvp-guests-wrapper" id="rsvpGuestsWrapper">
-            <label class="rsvp-guests-label" for="rsvpGuests">Câte persoane te însoțesc?</label>
-            <select class="rsvp-select" id="rsvpGuests">
-              <option value="">-- Selectează --</option>
-              <option value="1">1 persoană</option>
-              <option value="2">2 persoane</option>
-              <option value="3">3 persoane</option>
-              <option value="4">4 persoane</option>
-              <option value="5">5+ persoane</option>
-            </select>
-          </div>
+          <button class="rsvp-confirm-btn" id="rsvpConfirmBtn" disabled>
+            Confirmă prezența 🎉
+          </button>
         </div>
 
-        <button class="rsvp-confirm-btn" id="rsvpConfirmBtn" disabled>
-          Confirmă prezența 🎉
-        </button>
+        <!-- Panel tras confirmar -->
+        <div class="rsvp-confirmed-msg" id="rsvpConfirmedMsg">
+          <div class="rsvp-confirmed-icon" id="rsvpConfirmedIcon">🎉</div>
+          <p class="rsvp-confirmed-text" id="rsvpConfirmedText"></p>
+          <a href="#section3" class="rsvp-gifts-link" id="rsvpGiftsLink">
+            🎁 Ver lista de cadouri
+          </a>
+        </div>
 
       </div>
     </div>
   </section>
 
-  <!-- SECCIÓN 3: solo accesible tras confirmar -->
+  <!-- SECCIÓN 3 -->
   <section class="section section-3" id="section3" aria-hidden="true">
     <div class="content-card">
 
@@ -187,7 +199,7 @@
 
         <div class="secondary-img-wrapper">
           <img
-            src="hand.png"
+            src="hand.jpg"
             alt="Pointing hand"
             class="secondary-img hand-bounce"
           />
