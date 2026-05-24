@@ -10,6 +10,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
+
+  <div id="test-visible" style="position:fixed;top:0;left:0;background:red;color:white;font-size:20px;z-index:99999;padding:10px;">
+  PÁGINA CARGANDO...
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('test-visible').textContent = 'DOM OK';
+  });
+  window.addEventListener('load', function() {
+    document.getElementById('test-visible').textContent = 'LOAD OK - si ves esto el problema es CSS';
+  });
+</script>
 <body>
 
   <div class="page-bg"></div>
