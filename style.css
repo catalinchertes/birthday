@@ -630,7 +630,9 @@ body::before {
   padding: 10px 0;
 }
 
-.rsvp-confirmed-msg.visible { display: flex; }
+.rsvp-confirmed-msg.visible {
+  display: flex;  /* esto es lo crítico, no puede faltar */
+}
 
 .rsvp-confirmed-icon {
   font-size: 3rem;
@@ -675,7 +677,7 @@ body::before {
 }
 
 .confirm-title {
-  font-family: 'Bubblegum Sans', cursive;
+  font-family: 'Nunito', sans-serif;
   font-size: 2rem;
   color: var(--blue-royal);
   margin: 0 0 12px;
