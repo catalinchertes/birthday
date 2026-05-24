@@ -74,10 +74,14 @@ const section3gifts     = document.getElementById('section3-gifts');
 // ── Scroll siempre al botón confirmar (último elemento visible del form) ──
 function scrollToBottom() {
   setTimeout(() => {
-    const rect = confirmBtn.getBoundingClientRect();
-    const absoluteTop = window.pageYOffset + rect.bottom;
+function scrollToBottom() {
+  setTimeout(() => {
+    const section2 = document.getElementById('section2');
+    const card = section2.querySelector('.content-card');
+    const cardRect = card.getBoundingClientRect();
+    const scrollTarget = window.pageYOffset + cardRect.bottom;
     window.scrollTo({
-      top: absoluteTop - window.innerHeight + 800,
+      top: scrollTarget,
       behavior: 'smooth'
     });
   }, 150);
