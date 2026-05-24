@@ -31,8 +31,16 @@ setInterval(updateCountdown, 1000);
 // ── Animate on scroll ──
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('is-visible'); });
-}, { threshold: 0.15 });
-document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+}, { threshold: 0 });
+
+document.querySelectorAll('.animate-on-scroll').forEach(el => {
+  const rect = el.getBoundingClientRect();
+  if (rect.top < window.innerHeight) {
+    el.classList.add('is-visible');
+  } else {
+    observer.observe(el);
+  }
+});
 
 // ── DOM refs ──
 const rsvpYes           = document.getElementById('rsvp-yes');
@@ -60,7 +68,7 @@ const confirmMsg        = document.getElementById('confirmMsg');
 const confirmIcon       = document.getElementById('confirmIcon');
 const section3gifts     = document.getElementById('section3-gifts');
 
-// ── Scroll ──
+// ── Scroll al final de la página ──
 function scrollToBottom() {
   setTimeout(() => {
     window.scrollTo({
@@ -89,22 +97,22 @@ function applyConfirmedState(data) {
   section3.setAttribute('aria-hidden', 'false');
 
   if (data.attending) {
-    rsvpHand.src = 'mickeyhappy.png';
+    rsvpHand.src                  = 'mickeyhappy.png';
     rsvpConfirmedIcon.textContent = '🎉';
-    rsvpConfirmedText.innerHTML = `<strong>${data.name}</strong>, ai confirmat cu succes prezența. Ne vedem pe 27 iunie! 🎉`;
+    rsvpConfirmedText.innerHTML   = `<strong>${data.name}</strong>, ai confirmat cu succes prezența. Ne vedem pe 27 iunie! 🎉`;
     rsvpGiftsLink.classList.remove('hidden');
-    confirmIcon.textContent  = '🎉';
-    confirmTitle.textContent = 'Ne bucurăm că vii!';
-    confirmMsg.innerHTML     = `Te așteptăm pe <strong>${data.name}</strong> pe 27 iunie la ora 14:00 la Consist Parc.<br/>Pregătește-te pentru tort, baloane și multă iubire! 🎂`;
+    confirmIcon.textContent     = '🎉';
+    confirmTitle.textContent    = 'Ne bucurăm că vii!';
+    confirmMsg.innerHTML        = `Te așteptăm pe <strong>${data.name}</strong> pe 27 iunie la ora 14:00 la Consist Parc.<br/>Pregătește-te pentru tort, baloane și multă iubire! 🎂`;
     section3gifts.style.display = 'block';
   } else {
-    rsvpHand.src = 'mickeysad.png';
+    rsvpHand.src                  = 'mickeysad.png';
     rsvpConfirmedIcon.textContent = '😢';
-    rsvpConfirmedText.innerHTML = 'Înțelegem, ne pare rău că nu poți veni. Îți trimitem gânduri bune! 💙';
+    rsvpConfirmedText.innerHTML   = 'Înțelegem, ne pare rău că nu poți veni. Îți trimitem gânduri bune! 💙';
     rsvpGiftsLink.classList.add('hidden');
-    confirmIcon.textContent  = '😢';
-    confirmTitle.textContent = 'Ne pare rău că nu poți veni!';
-    confirmMsg.innerHTML     = 'Îți trimitem gânduri bune și sperăm să ne vedem cu altă ocazie. 💙';
+    confirmIcon.textContent     = '😢';
+    confirmTitle.textContent    = 'Ne pare rău că nu poți veni!';
+    confirmMsg.innerHTML        = 'Îți trimitem gânduri bune și sperăm să ne vedem cu altă ocazie. 💙';
     section3gifts.style.display = 'none';
   }
 }
@@ -120,7 +128,7 @@ try {
   localStorage.removeItem('brianRSVP');
 }
 
-// ── Eventos ──
+// ── Eventos radios principales ──
 rsvpYes.addEventListener('change', () => {
   labelYes.classList.add('selected-yes');
   labelYes.classList.remove('selected-no');
@@ -141,6 +149,7 @@ rsvpNo.addEventListener('change', () => {
   scrollToBottom();
 });
 
+// ── Eventos acompañante ──
 companionYes.addEventListener('change', () => {
   labelWithYes.classList.add('selected-yes');
   labelWithNo.classList.remove('selected-yes');
@@ -161,18 +170,29 @@ companionNo.addEventListener('change', () => {
 rsvpName.addEventListener('input', validateForm);
 rsvpGuests.addEventListener('change', validateForm);
 
+// ── Confirmar ──
 confirmBtn.addEventListener('click', () => {
   const data = { attending: rsvpYes.checked, name: rsvpName.value.trim() };
   localStorage.setItem('brianRSVP', JSON.stringify(data));
   applyConfirmedState(data);
-  setTimeout(() => section3.scrollIntoView({ behavior: 'smooth' }), 150);
+  setTimeout(() => {
+    window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: 'smooth'
+    });
+  }, 200);
 });
 
+// ── Botón "Vezi lista de cadouri" ──
 rsvpGiftsLink.addEventListener('click', (e) => {
   e.preventDefault();
-  section3.scrollIntoView({ behavior: 'smooth' });
+  window.scrollTo({
+    top: document.body.scrollHeight,
+    behavior: 'smooth'
+  });
 });
 
+// ── Bloquear acceso directo a sección 3 por hash ──
 window.addEventListener('hashchange', () => {
   if (window.location.hash === '#section3' && !section3.classList.contains('unlocked')) {
     history.replaceState(null, '', '#section2');
