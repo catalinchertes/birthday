@@ -71,19 +71,10 @@ const confirmMsg        = document.getElementById('confirmMsg');
 const confirmIcon       = document.getElementById('confirmIcon');
 const section3gifts     = document.getElementById('section3-gifts');
 
-// ── Scroll siempre al botón confirmar (último elemento visible del form) ──
+// ── Scroll al botón confirmar ──
 function scrollToBottom() {
   setTimeout(() => {
-function scrollToBottom() {
-  setTimeout(() => {
-    const section2 = document.getElementById('section2');
-    const card = section2.querySelector('.content-card');
-    const cardRect = card.getBoundingClientRect();
-    const scrollTarget = window.pageYOffset + cardRect.bottom;
-    window.scrollTo({
-      top: scrollTarget,
-      behavior: 'smooth'
-    });
+    confirmBtn.scrollIntoView({ behavior: 'smooth', block: 'end' });
   }, 150);
 }
 
