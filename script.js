@@ -1,7 +1,6 @@
 // ── Estrellas ──
 const starsContainer = document.getElementById('stars-container');
 const STAR_COUNT = 40;
-
 for (let i = 0; i < STAR_COUNT; i++) {
   const star = document.createElement('span');
   star.className = 'star';
@@ -72,11 +71,17 @@ const confirmMsg        = document.getElementById('confirmMsg');
 const confirmIcon       = document.getElementById('confirmIcon');
 const section3gifts     = document.getElementById('section3-gifts');
 
-// ── Helpers ──
+// ── Scroll suave a elemento (espera a que el DOM pinte) ──
 function scrollToElement(el) {
-  setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 80);
+  // Doble requestAnimationFrame: espera a que el elemento esté pintado y tenga altura
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+  });
 }
 
+// ── Validación ──
 function validateForm() {
   if (!rsvpYes.checked && !rsvpNo.checked) { confirmBtn.disabled = true; return; }
   if (rsvpNo.checked) { confirmBtn.disabled = false; return; }
@@ -86,16 +91,20 @@ function validateForm() {
   confirmBtn.disabled = !(hasName && hasCompanion && hasGuests);
 }
 
+// ── Aplicar estado confirmado (usado tanto al confirmar como al restaurar) ──
 function applyConfirmedState(data) {
+  // Ocultar formulario completamente, mostrar mensaje
   rsvpForm.style.display = 'none';
   rsvpConfirmedMsg.classList.add('visible');
+
+  // Desbloquear sección 3
   section3.classList.add('unlocked');
   section3.setAttribute('aria-hidden', 'false');
 
   if (data.attending) {
     rsvpHand.src                  = 'mickeyhappy.png';
     rsvpConfirmedIcon.textContent = '🎉';
-    rsvpConfirmedText.innerHTML   = `Confirmat! Ne vedem pe <strong>${data.name}</strong> pe 27 iunie. 🎂`;
+    rsvpConfirmedText.innerHTML   = `Confirmat! Ne vedem cu <strong>${data.name}</strong> pe 27 iunie. 🎂`;
     rsvpGiftsLink.classList.remove('hidden');
     confirmIcon.textContent     = '🎉';
     confirmTitle.textContent    = 'Ne bucurăm că vii!';
@@ -113,39 +122,47 @@ function applyConfirmedState(data) {
   }
 }
 
-// ── Restaurar estado tras F5 (localStorage) ──
+// ── Restaurar estado desde localStorage al cargar la página ──
 const savedRSVP = localStorage.getItem('brianRSVP');
 if (savedRSVP) {
-  applyConfirmedState(JSON.parse(savedRSVP));
+  try {
+    const data = JSON.parse(savedRSVP);
+    if (data && typeof data.attending === 'boolean') {
+      applyConfirmedState(data);
+    }
+  } catch (e) {
+    localStorage.removeItem('brianRSVP');
+  }
 }
 
-// ── Eventos RSVP ──
+// ── Eventos radios RSVP principal ──
 rsvpYes.addEventListener('change', () => {
   labelYes.classList.add('selected-yes');
   labelYes.classList.remove('selected-no');
   labelNo.classList.remove('selected-no', 'selected-yes');
-  rsvpExtra.classList.add('visible');
   rsvpHand.src = 'mickeyhappy.png';
+  rsvpExtra.classList.add('visible');
   validateForm();
-  scrollToElement(rsvpExtra);
+  scrollToElement(rsvpName); // scroll al campo nombre
 });
 
 rsvpNo.addEventListener('change', () => {
   labelNo.classList.add('selected-no');
   labelNo.classList.remove('selected-yes');
   labelYes.classList.remove('selected-yes', 'selected-no');
-  rsvpExtra.classList.remove('visible');
   rsvpHand.src = 'mickeysad.png';
+  rsvpExtra.classList.remove('visible');
   validateForm();
   scrollToElement(confirmBtn);
 });
 
+// ── Eventos acompañante ──
 companionYes.addEventListener('change', () => {
   labelWithYes.classList.add('selected-yes');
   labelWithNo.classList.remove('selected-yes');
   guestsWrapper.classList.add('visible');
   validateForm();
-  scrollToElement(guestsWrapper);
+  scrollToElement(guestsWrapper); // scroll al desplegable
 });
 
 companionNo.addEventListener('change', () => {
@@ -160,25 +177,29 @@ companionNo.addEventListener('change', () => {
 rsvpName.addEventListener('input', validateForm);
 rsvpGuests.addEventListener('change', validateForm);
 
-// ── Confirmar ──
+// ── Confirmar asistencia ──
 confirmBtn.addEventListener('click', () => {
   const data = {
     attending: rsvpYes.checked,
     name: rsvpName.value.trim()
   };
+  // Guardar en localStorage ANTES de aplicar el estado
   localStorage.setItem('brianRSVP', JSON.stringify(data));
   applyConfirmedState(data);
+  // Scroll suave a la sección 3
+  setTimeout(() => section3.scrollIntoView({ behavior: 'smooth' }), 150);
 });
 
-// ── Botón "Ver lista" -> scroll a sección 3 ──
+// ── Botón "Ver lista" en mensaje confirmado ──
 rsvpGiftsLink.addEventListener('click', (e) => {
   e.preventDefault();
   section3.scrollIntoView({ behavior: 'smooth' });
 });
 
-// ── Bloquear acceso directo a sección 3 por hash ──
+// ── Bloquear acceso directo a sección 3 por URL hash ──
 window.addEventListener('hashchange', () => {
   if (window.location.hash === '#section3' && !section3.classList.contains('unlocked')) {
-    window.location.hash = '#section2';
+    history.replaceState(null, '', '#section2');
+    document.getElementById('section2').scrollIntoView({ behavior: 'smooth' });
   }
 });
