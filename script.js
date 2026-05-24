@@ -1,7 +1,14 @@
 // ── Estrellas ──
+window.onerror = function(msg, src, line) {
+  document.body.innerHTML = `<div style="padding:20px;font-size:16px;color:red;background:white;position:fixed;inset:0;z-index:9999;overflow:auto;">
+    <strong>ERROR:</strong><br>${msg}<br><br>
+    <strong>Archivo:</strong> ${src}<br>
+    <strong>Línea:</strong> ${line}
+  </div>`;
+  return false;
+};
 const starsContainer = document.getElementById('stars-container');
-const STAR_COUNT = 40;
-for (let i = 0; i < STAR_COUNT; i++) {
+for (let i = 0; i < 40; i++) {
   const star = document.createElement('span');
   star.className = 'star';
   star.style.left = `${Math.random() * 100}%`;
@@ -17,35 +24,25 @@ for (let i = 0; i < STAR_COUNT; i++) {
 
 // ── Countdown ──
 const targetDate = new Date('2026-06-27T14:00:00');
-const daysEl    = document.querySelector('#cd-days .cd-number');
-const hoursEl   = document.querySelector('#cd-hours .cd-number');
-const minutesEl = document.querySelector('#cd-minutes .cd-number');
-const secondsEl = document.querySelector('#cd-seconds .cd-number');
 
 function updateCountdown() {
   const diff = targetDate - new Date();
-  if (diff <= 0) {
-    [daysEl, hoursEl, minutesEl, secondsEl].forEach(el => el.textContent = '0');
-    return;
-  }
-  const t = Math.floor(diff / 1000);
-  daysEl.textContent    = Math.floor(t / 86400);
-  hoursEl.textContent   = String(Math.floor((t % 86400) / 3600)).padStart(2, '0');
-  minutesEl.textContent = String(Math.floor((t % 3600) / 60)).padStart(2, '0');
-  secondsEl.textContent = String(t % 60).padStart(2, '0');
+  const t = diff > 0 ? Math.floor(diff / 1000) : 0;
+  document.querySelector('#cd-days .cd-number').textContent    = Math.floor(t / 86400);
+  document.querySelector('#cd-hours .cd-number').textContent   = String(Math.floor((t % 86400) / 3600)).padStart(2, '0');
+  document.querySelector('#cd-minutes .cd-number').textContent = String(Math.floor((t % 3600) / 60)).padStart(2, '0');
+  document.querySelector('#cd-seconds .cd-number').textContent = String(t % 60).padStart(2, '0');
 }
 updateCountdown();
 setInterval(updateCountdown, 1000);
 
 // ── Animate on scroll ──
 const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) entry.target.classList.add('is-visible');
-  });
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('is-visible'); });
 }, { threshold: 0.15 });
 document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
 
-// ── Referencias DOM ──
+// ── DOM refs ──
 const rsvpYes           = document.getElementById('rsvp-yes');
 const rsvpNo            = document.getElementById('rsvp-no');
 const labelYes          = document.getElementById('label-yes');
@@ -71,21 +68,20 @@ const confirmMsg        = document.getElementById('confirmMsg');
 const confirmIcon       = document.getElementById('confirmIcon');
 const section3gifts     = document.getElementById('section3-gifts');
 
-// ── Scroll al botón confirmar ──
+// ── Scroll ──
 function scrollToBottom() {
-  setTimeout(() => {
-    confirmBtn.scrollIntoView({ behavior: 'smooth', block: 'end' });
-  }, 150);
+  setTimeout(() => confirmBtn.scrollIntoView({ behavior: 'smooth', block: 'end' }), 150);
 }
 
 // ── Validación ──
 function validateForm() {
   if (!rsvpYes.checked && !rsvpNo.checked) { confirmBtn.disabled = true; return; }
   if (rsvpNo.checked) { confirmBtn.disabled = false; return; }
-  const hasName      = rsvpName.value.trim().length > 0;
-  const hasCompanion = companionYes.checked || companionNo.checked;
-  const hasGuests    = companionYes.checked ? rsvpGuests.value !== '' : true;
-  confirmBtn.disabled = !(hasName && hasCompanion && hasGuests);
+  confirmBtn.disabled = !(
+    rsvpName.value.trim().length > 0 &&
+    (companionYes.checked || companionNo.checked) &&
+    (companionYes.checked ? rsvpGuests.value !== '' : true)
+  );
 }
 
 // ── Aplicar estado confirmado ──
@@ -96,40 +92,38 @@ function applyConfirmedState(data) {
   section3.setAttribute('aria-hidden', 'false');
 
   if (data.attending) {
-    rsvpHand.src                  = 'mickeyhappy.png';
+    rsvpHand.src = 'mickeyhappy.png';
     rsvpConfirmedIcon.textContent = '🎉';
-    rsvpConfirmedText.innerHTML   = `<strong>${data.name}</strong>, ai confirmat cu succes prezența. Ne vedem pe 27 iunie! 🎉`;
+    rsvpConfirmedText.innerHTML = `<strong>${data.name}</strong>, ai confirmat cu succes prezența. Ne vedem pe 27 iunie! 🎉`;
     rsvpGiftsLink.classList.remove('hidden');
-    confirmIcon.textContent     = '🎉';
-    confirmTitle.textContent    = 'Ne bucurăm că vii!';
-    confirmMsg.innerHTML        = `Te așteptăm pe <strong>${data.name}</strong> pe 27 iunie la ora 14:00 la Consist Parc.<br/>Pregătește-te pentru tort, baloane și multă iubire! 🎂`;
+    confirmIcon.textContent  = '🎉';
+    confirmTitle.textContent = 'Ne bucurăm că vii!';
+    confirmMsg.innerHTML     = `Te așteptăm pe <strong>${data.name}</strong> pe 27 iunie la ora 14:00 la Consist Parc.<br/>Pregătește-te pentru tort, baloane și multă iubire! 🎂`;
     section3gifts.style.display = 'block';
   } else {
-    rsvpHand.src                  = 'mickeysad.png';
+    rsvpHand.src = 'mickeysad.png';
     rsvpConfirmedIcon.textContent = '😢';
-    rsvpConfirmedText.innerHTML   = 'Înțelegem, ne pare rău că nu poți veni. Îți trimitem gânduri bune! 💙';
+    rsvpConfirmedText.innerHTML = 'Înțelegem, ne pare rău că nu poți veni. Îți trimitem gânduri bune! 💙';
     rsvpGiftsLink.classList.add('hidden');
-    confirmIcon.textContent     = '😢';
-    confirmTitle.textContent    = 'Ne pare rău că nu poți veni!';
-    confirmMsg.innerHTML        = 'Îți trimitem gânduri bune și sperăm să ne vedem cu altă ocazie. 💙';
+    confirmIcon.textContent  = '😢';
+    confirmTitle.textContent = 'Ne pare rău că nu poți veni!';
+    confirmMsg.innerHTML     = 'Îți trimitem gânduri bune și sperăm să ne vedem cu altă ocazie. 💙';
     section3gifts.style.display = 'none';
   }
 }
 
-// ── Restaurar estado desde localStorage al cargar ──
-const savedRSVP = localStorage.getItem('brianRSVP');
-if (savedRSVP) {
-  try {
-    const data = JSON.parse(savedRSVP);
-    if (data && typeof data.attending === 'boolean') {
-      applyConfirmedState(data);
-    }
-  } catch (e) {
-    localStorage.removeItem('brianRSVP');
+// ── Restaurar desde localStorage ──
+try {
+  const saved = localStorage.getItem('brianRSVP');
+  if (saved) {
+    const data = JSON.parse(saved);
+    if (data && typeof data.attending === 'boolean') applyConfirmedState(data);
   }
+} catch (e) {
+  localStorage.removeItem('brianRSVP');
 }
 
-// ── Eventos radios RSVP principal ──
+// ── Eventos ──
 rsvpYes.addEventListener('change', () => {
   labelYes.classList.add('selected-yes');
   labelYes.classList.remove('selected-no');
@@ -150,7 +144,6 @@ rsvpNo.addEventListener('change', () => {
   scrollToBottom();
 });
 
-// ── Eventos acompañante ──
 companionYes.addEventListener('change', () => {
   labelWithYes.classList.add('selected-yes');
   labelWithNo.classList.remove('selected-yes');
@@ -171,24 +164,18 @@ companionNo.addEventListener('change', () => {
 rsvpName.addEventListener('input', validateForm);
 rsvpGuests.addEventListener('change', validateForm);
 
-// ── Confirmar asistencia ──
 confirmBtn.addEventListener('click', () => {
-  const data = {
-    attending: rsvpYes.checked,
-    name: rsvpName.value.trim()
-  };
+  const data = { attending: rsvpYes.checked, name: rsvpName.value.trim() };
   localStorage.setItem('brianRSVP', JSON.stringify(data));
   applyConfirmedState(data);
   setTimeout(() => section3.scrollIntoView({ behavior: 'smooth' }), 150);
 });
 
-// ── Botón "Vezi lista de cadouri" ──
 rsvpGiftsLink.addEventListener('click', (e) => {
   e.preventDefault();
   section3.scrollIntoView({ behavior: 'smooth' });
 });
 
-// ── Bloquear acceso directo a sección 3 por hash ──
 window.addEventListener('hashchange', () => {
   if (window.location.hash === '#section3' && !section3.classList.contains('unlocked')) {
     history.replaceState(null, '', '#section2');
