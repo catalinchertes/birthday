@@ -104,7 +104,7 @@ function applyConfirmedState(data) {
   if (data.attending) {
     rsvpHand.src                  = 'mickeyhappy.png';
     rsvpConfirmedIcon.textContent = '🎉';
-    rsvpConfirmedText.innerHTML   = `Confirmat! Ne vedem cu <strong>${data.name}</strong> pe 27 iunie. 🎂`;
+    rsvpConfirmedText.innerHTML = `<strong>${data.name}</strong>, ai confirmat cu succes prezența. Ne vedem pe 27 iunie! 🎉`;
     rsvpGiftsLink.classList.remove('hidden');
     confirmIcon.textContent     = '🎉';
     confirmTitle.textContent    = 'Ne bucurăm că vii!';
