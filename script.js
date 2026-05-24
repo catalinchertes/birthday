@@ -74,8 +74,13 @@ const section3gifts     = document.getElementById('section3-gifts');
 // ── Scroll siempre al botón confirmar (último elemento visible del form) ──
 function scrollToBottom() {
   setTimeout(() => {
-    confirmBtn.scrollIntoView({ behavior: 'smooth', block: 'end' });
-  }, 120);
+    const rect = confirmBtn.getBoundingClientRect();
+    const absoluteTop = window.pageYOffset + rect.bottom;
+    window.scrollTo({
+      top: absoluteTop - window.innerHeight + 24,
+      behavior: 'smooth'
+    });
+  }, 150);
 }
 
 // ── Validación ──
