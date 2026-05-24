@@ -73,12 +73,24 @@ const section3gifts     = document.getElementById('section3-gifts');
 
 // ── Scroll suave a elemento (espera a que el DOM pinte) ──
 function scrollToElement(el) {
-  // Doble requestAnimationFrame: espera a que el elemento esté pintado y tenga altura
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    });
+  // Si ya tiene altura, scroll directo
+  if (el.getBoundingClientRect().height > 0) {
+    setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+    return;
+  }
+  // Si no tiene altura aún, esperar a que la tenga
+  const ro = new ResizeObserver((entries, obs) => {
+    for (const entry of entries) {
+      if (entry.contentRect.height > 0) {
+        obs.disconnect();
+        setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+        return;
+      }
+    }
   });
+  ro.observe(el);
+  // Safety timeout: desconectar si tarda más de 1s
+  setTimeout(() => ro.disconnect(), 1000);
 }
 
 // ── Validación ──
