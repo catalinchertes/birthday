@@ -22,8 +22,8 @@ function updateCountdown() {
   const t = diff > 0 ? Math.floor(diff / 1000) : 0;
   document.querySelector('#cd-days .cd-number').textContent    = Math.floor(t / 86400);
   document.querySelector('#cd-hours .cd-number').textContent   = String(Math.floor((t % 86400) / 3600)).padStart(2, '0');
-  document.querySelector('#cd-minutes .cd-number').textContent = String(Math.floor((t % 3600) / 60)).padStart(2, '0');
-  document.querySelector('#cd-seconds .cd-number').textContent = String(t % 60).padStart(2, '0');
+  document.querySelector('#cd-minutes .cd-number').textContent = String(Math.floor((t % 3600) / 60)).padStart(2, '00');
+  document.querySelector('#cd-seconds .cd-number').textContent = String(t % 60).padStart(2, '00');
 }
 updateCountdown();
 setInterval(updateCountdown, 1000);
@@ -68,13 +68,10 @@ const confirmMsg        = document.getElementById('confirmMsg');
 const confirmIcon       = document.getElementById('confirmIcon');
 const section3gifts     = document.getElementById('section3-gifts');
 
-// ── Scroll al final de la página ──
+// ── Scroll al final ──
 function scrollToBottom() {
   setTimeout(() => {
-    window.scrollTo({
-      top: document.body.scrollHeight,
-      behavior: 'smooth'
-    });
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
   }, 150);
 }
 
@@ -91,33 +88,40 @@ function validateForm() {
 
 // ── Aplicar estado confirmado ──
 function applyConfirmedState(data) {
+  // Ocultar formulario
   rsvpForm.style.display = 'none';
+
+  // Mostrar mensaje confirmado — forzar display flex directamente
+  rsvpConfirmedMsg.style.display = 'flex';
   rsvpConfirmedMsg.classList.add('visible');
-  section3.classList.add('unlocked');
-  section3.setAttribute('aria-hidden', 'false');
 
   if (data.attending) {
+    // Sí asiste
+    section3.classList.add('unlocked');
+    section3.setAttribute('aria-hidden', 'false');
+
     rsvpHand.src                  = 'mickeyhappy.png';
     rsvpConfirmedIcon.textContent = '🎉';
     rsvpConfirmedText.innerHTML   = `<strong>${data.name}</strong>, ai confirmat cu succes prezența. Ne vedem pe 27 iunie! 🎉`;
-    rsvpGiftsLink.classList.remove('hidden');
+    rsvpGiftsLink.style.display   = 'inline-flex';
+
     confirmIcon.textContent     = '🎉';
     confirmTitle.textContent    = 'Ne bucurăm că vii!';
     confirmMsg.innerHTML        = `Te așteptăm pe <strong>${data.name}</strong> pe 27 iunie la ora 14:00 la Consist Parc.<br/>Pregătește-te pentru tort, baloane și multă iubire! 🎂`;
     section3gifts.style.display = 'block';
   } else {
+    // No asiste — sección 3 NO se muestra
+    section3.classList.remove('unlocked');
+    section3.setAttribute('aria-hidden', 'true');
+
     rsvpHand.src                  = 'mickeysad.png';
     rsvpConfirmedIcon.textContent = '😢';
     rsvpConfirmedText.innerHTML   = 'Înțelegem, ne pare rău că nu poți veni. Îți trimitem gânduri bune! 💙';
-    rsvpGiftsLink.classList.add('hidden');
-    confirmIcon.textContent     = '😢';
-    confirmTitle.textContent    = 'Ne pare rău că nu poți veni!';
-    confirmMsg.innerHTML        = 'Îți trimitem gânduri bune și sperăm să ne vedem cu altă ocazie. 💙';
-    section3gifts.style.display = 'none';
+    rsvpGiftsLink.style.display   = 'none';
   }
 }
 
-// ── Restaurar desde localStorage ──
+// ── Restaurar desde localStorage al cargar ──
 try {
   const saved = localStorage.getItem('brianRSVP');
   if (saved) {
@@ -175,22 +179,19 @@ confirmBtn.addEventListener('click', () => {
   const data = { attending: rsvpYes.checked, name: rsvpName.value.trim() };
   localStorage.setItem('brianRSVP', JSON.stringify(data));
   applyConfirmedState(data);
-  // Aumenta el delay a 400ms para que section3 pase a display:flex antes del scroll
-  setTimeout(() => {
-    window.scrollTo({
-      top: document.body.scrollHeight,
-      behavior: 'smooth'
-    });
-  }, 400);
+
+  if (data.attending) {
+    // Scroll al final después de que section3 aparezca
+    setTimeout(() => {
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }, 400);
+  }
 });
 
 // ── Botón "Vezi lista de cadouri" ──
 rsvpGiftsLink.addEventListener('click', (e) => {
   e.preventDefault();
-  window.scrollTo({
-    top: document.body.scrollHeight,
-    behavior: 'smooth'
-  });
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 });
 
 // ── Bloquear acceso directo a sección 3 por hash ──
