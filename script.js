@@ -71,26 +71,11 @@ const confirmMsg        = document.getElementById('confirmMsg');
 const confirmIcon       = document.getElementById('confirmIcon');
 const section3gifts     = document.getElementById('section3-gifts');
 
-// ── Scroll suave a elemento (espera a que el DOM pinte) ──
-function scrollToElement(el) {
-  // Si ya tiene altura, scroll directo
-  if (el.getBoundingClientRect().height > 0) {
-    setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
-    return;
-  }
-  // Si no tiene altura aún, esperar a que la tenga
-  const ro = new ResizeObserver((entries, obs) => {
-    for (const entry of entries) {
-      if (entry.contentRect.height > 0) {
-        obs.disconnect();
-        setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
-        return;
-      }
-    }
-  });
-  ro.observe(el);
-  // Safety timeout: desconectar si tarda más de 1s
-  setTimeout(() => ro.disconnect(), 1000);
+// ── Scroll siempre al botón confirmar (último elemento visible del form) ──
+function scrollToBottom() {
+  setTimeout(() => {
+    confirmBtn.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, 120);
 }
 
 // ── Validación ──
@@ -103,20 +88,17 @@ function validateForm() {
   confirmBtn.disabled = !(hasName && hasCompanion && hasGuests);
 }
 
-// ── Aplicar estado confirmado (usado tanto al confirmar como al restaurar) ──
+// ── Aplicar estado confirmado ──
 function applyConfirmedState(data) {
-  // Ocultar formulario completamente, mostrar mensaje
   rsvpForm.style.display = 'none';
   rsvpConfirmedMsg.classList.add('visible');
-
-  // Desbloquear sección 3
   section3.classList.add('unlocked');
   section3.setAttribute('aria-hidden', 'false');
 
   if (data.attending) {
     rsvpHand.src                  = 'mickeyhappy.png';
     rsvpConfirmedIcon.textContent = '🎉';
-    rsvpConfirmedText.innerHTML = `<strong>${data.name}</strong>, ai confirmat cu succes prezența. Ne vedem pe 27 iunie! 🎉`;
+    rsvpConfirmedText.innerHTML   = `<strong>${data.name}</strong>, ai confirmat cu succes prezența. Ne vedem pe 27 iunie! 🎉`;
     rsvpGiftsLink.classList.remove('hidden');
     confirmIcon.textContent     = '🎉';
     confirmTitle.textContent    = 'Ne bucurăm că vii!';
@@ -134,7 +116,7 @@ function applyConfirmedState(data) {
   }
 }
 
-// ── Restaurar estado desde localStorage al cargar la página ──
+// ── Restaurar estado desde localStorage al cargar ──
 const savedRSVP = localStorage.getItem('brianRSVP');
 if (savedRSVP) {
   try {
@@ -155,7 +137,7 @@ rsvpYes.addEventListener('change', () => {
   rsvpHand.src = 'mickeyhappy.png';
   rsvpExtra.classList.add('visible');
   validateForm();
-  scrollToElement(rsvpName); // scroll al campo nombre
+  scrollToBottom();
 });
 
 rsvpNo.addEventListener('change', () => {
@@ -165,7 +147,7 @@ rsvpNo.addEventListener('change', () => {
   rsvpHand.src = 'mickeysad.png';
   rsvpExtra.classList.remove('visible');
   validateForm();
-  scrollToElement(confirmBtn);
+  scrollToBottom();
 });
 
 // ── Eventos acompañante ──
@@ -174,7 +156,7 @@ companionYes.addEventListener('change', () => {
   labelWithNo.classList.remove('selected-yes');
   guestsWrapper.classList.add('visible');
   validateForm();
-  scrollToElement(guestsWrapper); // scroll al desplegable
+  scrollToBottom();
 });
 
 companionNo.addEventListener('change', () => {
@@ -183,7 +165,7 @@ companionNo.addEventListener('change', () => {
   guestsWrapper.classList.remove('visible');
   rsvpGuests.value = '';
   validateForm();
-  scrollToElement(confirmBtn);
+  scrollToBottom();
 });
 
 rsvpName.addEventListener('input', validateForm);
@@ -195,20 +177,18 @@ confirmBtn.addEventListener('click', () => {
     attending: rsvpYes.checked,
     name: rsvpName.value.trim()
   };
-  // Guardar en localStorage ANTES de aplicar el estado
   localStorage.setItem('brianRSVP', JSON.stringify(data));
   applyConfirmedState(data);
-  // Scroll suave a la sección 3
   setTimeout(() => section3.scrollIntoView({ behavior: 'smooth' }), 150);
 });
 
-// ── Botón "Ver lista" en mensaje confirmado ──
+// ── Botón "Vezi lista de cadouri" ──
 rsvpGiftsLink.addEventListener('click', (e) => {
   e.preventDefault();
   section3.scrollIntoView({ behavior: 'smooth' });
 });
 
-// ── Bloquear acceso directo a sección 3 por URL hash ──
+// ── Bloquear acceso directo a sección 3 por hash ──
 window.addEventListener('hashchange', () => {
   if (window.location.hash === '#section3' && !section3.classList.contains('unlocked')) {
     history.replaceState(null, '', '#section2');
