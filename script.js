@@ -1,12 +1,4 @@
 // ── Estrellas ──
-window.onerror = function(msg, src, line) {
-  document.body.innerHTML = `<div style="padding:20px;font-size:16px;color:red;background:white;position:fixed;inset:0;z-index:9999;overflow:auto;">
-    <strong>ERROR:</strong><br>${msg}<br><br>
-    <strong>Archivo:</strong> ${src}<br>
-    <strong>Línea:</strong> ${line}
-  </div>`;
-  return false;
-};
 const starsContainer = document.getElementById('stars-container');
 for (let i = 0; i < 40; i++) {
   const star = document.createElement('span');
