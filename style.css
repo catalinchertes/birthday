@@ -423,8 +423,8 @@ body::before {
 }
 
 @keyframes bounceHand {
-  0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(14px); }
+  0%, 100% { transform: translateY(15); }
+  50%       { transform: translateY(30px); }
 }
 
 .gift-cta-btn {
