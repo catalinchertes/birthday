@@ -199,12 +199,6 @@ body::before {
   border: 2px solid var(--blue-mid);
   box-shadow: 0 0 0 8px rgba(255,255,255,0.75), 0 0 18px rgba(37, 99, 176, 0.35);
   background: rgba(255,255,255,0.5);
-  animation: swingAvatar 3s ease-in-out infinite;
-}
-
-@keyframes swingAvatar {
-  0%, 100% { transform: translateX(0); }
-  50%       { transform: translateX(10px); }
 }
 
 .avatar-placeholder,
