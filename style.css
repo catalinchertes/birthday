@@ -661,7 +661,6 @@ body::before {
 }
 
 .rsvp-gifts-link:hover { transform: translateY(-2px); }
-.rsvp-gifts-link.hidden { display: none !important; }
 
 /* ── SECCIÓN 3 ── */
 .section-3 { display: none; }
