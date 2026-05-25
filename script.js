@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyFIbXjnjfK9SDAv25MT_lnhxXhjx_Y_RRqXW3Pg0Mb-L3rTd-4Sv0-RdufTghXNTFm/exec';
+
 // ── Estrellas ──
 const starsContainer = document.getElementById('stars-container');
 for (let i = 0; i < 40; i++) {
@@ -46,6 +48,7 @@ const rsvpYes          = document.getElementById('rsvp-yes');
 const rsvpNo           = document.getElementById('rsvp-no');
 const labelYes         = document.getElementById('label-yes');
 const labelNo          = document.getElementById('label-no');
+const rsvpNameWrapper  = document.getElementById('rsvpNameWrapper');
 const rsvpExtra        = document.getElementById('rsvpExtra');
 const rsvpHand         = document.getElementById('rsvpHand');
 const rsvpName         = document.getElementById('rsvpName');
@@ -72,33 +75,51 @@ function scrollToBottom() {
 
 // ── Validación ──
 function validateForm() {
+  const hasName = rsvpName.value.trim().length > 0;
   if (!rsvpYes.checked && !rsvpNo.checked) { confirmBtn.disabled = true; return; }
-  if (rsvpNo.checked) { confirmBtn.disabled = false; return; }
+  if (rsvpNo.checked) { confirmBtn.disabled = !hasName; return; }
+  // Sí asiste
   confirmBtn.disabled = !(
-    rsvpName.value.trim().length > 0 &&
+    hasName &&
     (companionYes.checked || companionNo.checked) &&
     (companionYes.checked ? rsvpGuests.value !== '' : true)
   );
 }
 
+// ── Enviar a Apps Script ──
+function submitToSheet(data) {
+  const params = new URLSearchParams({
+    attendance: data.attending ? 'yes' : 'no',
+    name:       data.name,
+    guests:     data.guests || 0
+  });
+  fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: params.toString()
+  })
+  .then(r => r.json())
+  .then(res => console.log('Sheet response:', res))
+  .catch(err => console.error('Sheet error:', err));
+}
+
 // ── Aplicar estado confirmado ──
-// Solo toca elementos de sección 2, nunca de sección 3
 function applyConfirmedState(data) {
   rsvpForm.style.display = 'none';
   rsvpConfirmedMsg.style.display = 'flex';
 
   if (data.attending) {
-    rsvpHand.src                   = 'mickeyhappy.png';
-    rsvpConfirmedIcon.textContent  = '🎉';
-    rsvpConfirmedText.innerHTML    = `<strong>${data.name}</strong>, ai confirmat cu succes prezența. Ne vedem pe 27 iunie! 🎉`;
-    rsvpGiftsLink.style.display    = 'inline-flex';
-    section3.style.display         = 'flex';
+    rsvpHand.src                  = 'mickeyhappy.png';
+    rsvpConfirmedIcon.textContent = '🎉';
+    rsvpConfirmedText.innerHTML   = `<strong>${data.name}</strong>, ai confirmat cu succes prezența. Ne vedem pe 27 iunie! 🎉`;
+    rsvpGiftsLink.style.display   = 'inline-flex';
+    section3.style.display        = 'flex';
   } else {
-    rsvpHand.src                   = 'mickeysad.png';
-    rsvpConfirmedIcon.textContent  = '😢';
-    rsvpConfirmedText.innerHTML    = 'Înțelegem, ne pare rău că nu poți veni. Îți trimitem gânduri bune! 💙';
-    rsvpGiftsLink.style.display    = 'none';
-    section3.style.display         = 'none';
+    rsvpHand.src                  = 'mickeysad.png';
+    rsvpConfirmedIcon.textContent = '😢';
+    rsvpConfirmedText.innerHTML   = `<strong>${data.name}</strong>, înțelegem că nu poți veni. Îți trimitem gânduri bune! 💙`;
+    rsvpGiftsLink.style.display   = 'none';
+    section3.style.display        = 'none';
   }
 }
 
@@ -119,6 +140,7 @@ rsvpYes.addEventListener('change', () => {
   labelYes.classList.remove('selected-no');
   labelNo.classList.remove('selected-no', 'selected-yes');
   rsvpHand.src = 'mickeyhappy.png';
+  rsvpNameWrapper.classList.add('visible');
   rsvpExtra.classList.add('visible');
   validateForm();
   scrollToBottom();
@@ -129,6 +151,7 @@ rsvpNo.addEventListener('change', () => {
   labelNo.classList.remove('selected-yes');
   labelYes.classList.remove('selected-yes', 'selected-no');
   rsvpHand.src = 'mickeysad.png';
+  rsvpNameWrapper.classList.add('visible');
   rsvpExtra.classList.remove('visible');
   validateForm();
   scrollToBottom();
@@ -157,8 +180,14 @@ rsvpGuests.addEventListener('change', validateForm);
 
 // ── Confirmar ──
 confirmBtn.addEventListener('click', () => {
-  const data = { attending: rsvpYes.checked, name: rsvpName.value.trim() };
+  const guestsVal = rsvpGuests.value ? parseInt(rsvpGuests.value) : 0;
+  const data = {
+    attending: rsvpYes.checked,
+    name:      rsvpName.value.trim(),
+    guests:    guestsVal
+  };
   localStorage.setItem('brianRSVP', JSON.stringify(data));
+  submitToSheet(data);
   applyConfirmedState(data);
   if (data.attending) {
     setTimeout(() => {
@@ -167,7 +196,7 @@ confirmBtn.addEventListener('click', () => {
   }
 });
 
-// ── Botón "Vezi lista de cadouri" ──
+// ── Botón lista cadouri ──
 rsvpGiftsLink.addEventListener('click', (e) => {
   e.preventDefault();
   window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
