@@ -8,10 +8,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
-  
 <body>
 
-  <div class="page-bg"></div>
   <div class="bg-overlay"></div>
   <div id="stars-container"></div>
 
@@ -25,19 +23,20 @@
           src="mickey2.png"
           alt="Brian"
           class="avatar-img"
-          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+          onerror="this.style.display='none';"
         />
       </div>
 
       <div class="hero-name">
         <span class="name-brian">BRIAN</span>
-        <span class="hero-tex"><strong>împlinește 1 anișor!</strong></span>
+        <span class="name-sub"><strong>împlinește 1 anișor!</strong></span>
       </div>
 
       <p class="hero-text">
         Dragi prieteni și familie,<br/>
         Nici nu știm când a trecut timpul, dar minunea noastră mică, Brian, împlinește deja 1 anișor!
-        A fost un an plin de zâmbete, nopți albe și iubire nesfârșită, așa că vrem să sărbătorim acest prim mare capitol alături de oamenii dragi sufletului nostru.
+        A fost un an plin de zâmbete, nopți albe și iubire nesfârșită, așa că vrem să sărbătorim
+        acest prim mare capitol alături de oamenii dragi sufletului nostru.
       </p>
 
       <div class="gifts-row" aria-hidden="true">
@@ -100,15 +99,18 @@
         Vă așteptăm cu mare drag să suflăm în prima mea lumânare și să facem amintiri de neuitat!
       </p>
 
-      <!-- FORMULARIO RSVP -->
+      <!-- RSVP -->
       <div class="rsvp-block animate-on-scroll">
 
         <div class="rsvp-img-wrapper">
-          <img src="mickeywelcome.png" alt="RSVP" class="rsvp-hand" id="rsvpHand" />
+          <img src="mickeywelcome.png" alt="RSVP" class="rsvp-hand" id="rsvpHand"
+               onerror="this.style.display='none';" />
         </div>
 
-        <!-- Panel formulario -->
+        <!-- Formulario -->
         <div id="rsvpForm">
+
+          <!-- Radios principales -->
           <div class="rsvp-radio-group">
             <label class="rsvp-radio-btn" id="label-yes">
               <input type="radio" name="rsvp" value="yes" id="rsvp-yes" />
@@ -120,7 +122,8 @@
             </label>
           </div>
 
-          <div class="rsvp-extra" id="rsvpExtra">
+          <!-- Nombre — visible para ambas opciones -->
+          <div class="rsvp-extra" id="rsvpNameWrapper">
             <input
               type="text"
               class="rsvp-input"
@@ -128,7 +131,10 @@
               placeholder="Numele tău 👤"
               maxlength="60"
             />
+          </div>
 
+          <!-- Acompañante — solo visible si asiste -->
+          <div class="rsvp-extra" id="rsvpExtra">
             <div class="rsvp-companion-group">
               <span class="rsvp-companion-label">Vii însoțit/ă?</span>
               <div class="rsvp-radio-group rsvp-radio-group--small">
@@ -159,41 +165,52 @@
           <button class="rsvp-confirm-btn" id="rsvpConfirmBtn" disabled>
             Confirmă prezența 🎉
           </button>
-        </div>
 
-        <!-- Mensaje tras confirmar -->
+        </div>
+        <!-- fin rsvpForm -->
+
+        <!-- Mensaje confirmado -->
         <div class="rsvp-confirmed-msg" id="rsvpConfirmedMsg">
           <div class="rsvp-confirmed-icon" id="rsvpConfirmedIcon">🎉</div>
           <p class="rsvp-confirmed-text" id="rsvpConfirmedText"></p>
-          <a href="#section3" class="rsvp-gifts-link" id="rsvpGiftsLink">
+          <a href="#section3" class="rsvp-gifts-link" id="rsvpGiftsLink" style="display:none">
             🎁 Consultă lista de cadouri
           </a>
         </div>
 
       </div>
+      <!-- fin rsvp-block -->
+
     </div>
   </section>
 
   <!-- SECCIÓN 3 -->
-  <section class="section section-3" id="section3" aria-hidden="true">
+  <section class="section section-3" id="section3" aria-hidden="true" style="display:none">
     <div class="content-card">
 
-      <div class="confirm-icon" id="confirmIcon">🎉</div>
-      <h2 class="confirm-title" id="confirmTitle">Ne bucurăm că vii!</h2>
-      <p class="confirm-msg" id="confirmMsg"></p>
-
-      <p class="gift-note">
-          <em>Notă pentru spiriduși: Pentru că mulți dintre voi ne-ați întrebat ce îi place lui Brian în această perioadă, am pregătit o listă cu idei de cadouri care i-ar aduce zâmbetul pe buze și i-ar fi de folos.</em>
+      <div class="confirm-icon">🎉</div>
+      <h2 class="confirm-title">Lista de cadouri</h2>
+      <p class="confirm-msg">
+        Pentru că mulți dintre voi ne-ați întrebat ce îi place lui Brian, am pregătit o listă
+        cu idei de cadouri care i-ar aduce zâmbetul pe buze și i-ar fi de folos.
       </p>
 
       <div id="section3-gifts">
+
+        <p class="gift-note">
+          <em>Notă pentru spiriduși: Orice gest mic sau mare va fi primit cu multă dragoste. 💙</em>
+        </p>
+
         <div class="secondary-img-wrapper">
           <img
-            src="hand.png"
+            src="hand.jpg"
             alt="Pointing hand"
             class="secondary-img hand-bounce"
+            onerror="this.style.display='none';"
           />
         </div>
+
+        <p class="location-label">🎁 Lista de cadouri</p>
 
         <a
           href="https://www.hellobb.net/guest/kLwO"
