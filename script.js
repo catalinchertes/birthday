@@ -1,3 +1,5 @@
+document.addEventListener('DOMContentLoaded', () => {
+
 // ── Estrellas ──
 const starsContainer = document.getElementById('stars-container');
 for (let i = 0; i < 40; i++) {
@@ -16,14 +18,13 @@ for (let i = 0; i < 40; i++) {
 
 // ── Countdown ──
 const targetDate = new Date('2026-06-27T14:00:00');
-
 function updateCountdown() {
   const diff = targetDate - new Date();
   const t = diff > 0 ? Math.floor(diff / 1000) : 0;
   document.querySelector('#cd-days .cd-number').textContent    = Math.floor(t / 86400);
   document.querySelector('#cd-hours .cd-number').textContent   = String(Math.floor((t % 86400) / 3600)).padStart(2, '0');
-  document.querySelector('#cd-minutes .cd-number').textContent = String(Math.floor((t % 3600) / 60)).padStart(2, '00');
-  document.querySelector('#cd-seconds .cd-number').textContent = String(t % 60).padStart(2, '00');
+  document.querySelector('#cd-minutes .cd-number').textContent = String(Math.floor((t % 3600) / 60)).padStart(2, '0');
+  document.querySelector('#cd-seconds .cd-number').textContent = String(t % 60).padStart(2, '0');
 }
 updateCountdown();
 setInterval(updateCountdown, 1000);
@@ -32,10 +33,8 @@ setInterval(updateCountdown, 1000);
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('is-visible'); });
 }, { threshold: 0 });
-
 document.querySelectorAll('.animate-on-scroll').forEach(el => {
-  const rect = el.getBoundingClientRect();
-  if (rect.top < window.innerHeight) {
+  if (el.getBoundingClientRect().top < window.innerHeight) {
     el.classList.add('is-visible');
   } else {
     observer.observe(el);
@@ -43,30 +42,26 @@ document.querySelectorAll('.animate-on-scroll').forEach(el => {
 });
 
 // ── DOM refs ──
-const rsvpYes           = document.getElementById('rsvp-yes');
-const rsvpNo            = document.getElementById('rsvp-no');
-const labelYes          = document.getElementById('label-yes');
-const labelNo           = document.getElementById('label-no');
-const rsvpExtra         = document.getElementById('rsvpExtra');
-const rsvpHand          = document.getElementById('rsvpHand');
-const rsvpName          = document.getElementById('rsvpName');
-const companionYes      = document.getElementById('companion-yes');
-const companionNo       = document.getElementById('companion-no');
-const labelWithYes      = document.getElementById('label-with-yes');
-const labelWithNo       = document.getElementById('label-with-no');
-const guestsWrapper     = document.getElementById('rsvpGuestsWrapper');
-const rsvpGuests        = document.getElementById('rsvpGuests');
-const confirmBtn        = document.getElementById('rsvpConfirmBtn');
-const rsvpForm          = document.getElementById('rsvpForm');
-const rsvpConfirmedMsg  = document.getElementById('rsvpConfirmedMsg');
-const rsvpConfirmedIcon = document.getElementById('rsvpConfirmedIcon');
-const rsvpConfirmedText = document.getElementById('rsvpConfirmedText');
-const rsvpGiftsLink     = document.getElementById('rsvpGiftsLink');
-const section3          = document.getElementById('section3');
-const confirmTitle      = document.getElementById('confirmTitle');
-const confirmMsg        = document.getElementById('confirmMsg');
-const confirmIcon       = document.getElementById('confirmIcon');
-const section3gifts     = document.getElementById('section3-gifts');
+const rsvpYes          = document.getElementById('rsvp-yes');
+const rsvpNo           = document.getElementById('rsvp-no');
+const labelYes         = document.getElementById('label-yes');
+const labelNo          = document.getElementById('label-no');
+const rsvpExtra        = document.getElementById('rsvpExtra');
+const rsvpHand         = document.getElementById('rsvpHand');
+const rsvpName         = document.getElementById('rsvpName');
+const companionYes     = document.getElementById('companion-yes');
+const companionNo      = document.getElementById('companion-no');
+const labelWithYes     = document.getElementById('label-with-yes');
+const labelWithNo      = document.getElementById('label-with-no');
+const guestsWrapper    = document.getElementById('rsvpGuestsWrapper');
+const rsvpGuests       = document.getElementById('rsvpGuests');
+const confirmBtn       = document.getElementById('rsvpConfirmBtn');
+const rsvpForm         = document.getElementById('rsvpForm');
+const rsvpConfirmedMsg = document.getElementById('rsvpConfirmedMsg');
+const rsvpConfirmedIcon= document.getElementById('rsvpConfirmedIcon');
+const rsvpConfirmedText= document.getElementById('rsvpConfirmedText');
+const rsvpGiftsLink    = document.getElementById('rsvpGiftsLink');
+const section3         = document.getElementById('section3');
 
 // ── Scroll al final ──
 function scrollToBottom() {
@@ -87,41 +82,27 @@ function validateForm() {
 }
 
 // ── Aplicar estado confirmado ──
+// Solo toca elementos de sección 2, nunca de sección 3
 function applyConfirmedState(data) {
-  // Ocultar formulario
   rsvpForm.style.display = 'none';
-
-  // Mostrar mensaje confirmado — forzar display flex directamente
   rsvpConfirmedMsg.style.display = 'flex';
-  rsvpConfirmedMsg.classList.add('visible');
 
   if (data.attending) {
-    // Sí asiste
-    section3.classList.add('unlocked');
-    section3.setAttribute('aria-hidden', 'false');
-
-    rsvpHand.src                  = 'mickeyhappy.png';
-    rsvpConfirmedIcon.textContent = '🎉';
-    rsvpConfirmedText.innerHTML   = `<strong>${data.name}</strong>, ai confirmat cu succes prezența. Ne vedem pe 27 iunie! 🎉`;
-    rsvpGiftsLink.style.display   = 'inline-flex';
-
-    confirmIcon.textContent     = '🎉';
-    confirmTitle.textContent    = 'Ne bucurăm că vii!';
-    confirmMsg.innerHTML        = `Te așteptăm pe <strong>${data.name}</strong> pe 27 iunie la ora 14:00 la Consist Parc.<br/>Pregătește-te pentru tort, baloane și multă iubire! 🎂`;
-    section3gifts.style.display = 'block';
+    rsvpHand.src                   = 'mickeyhappy.png';
+    rsvpConfirmedIcon.textContent  = '🎉';
+    rsvpConfirmedText.innerHTML    = `<strong>${data.name}</strong>, ai confirmat cu succes prezența. Ne vedem pe 27 iunie! 🎉`;
+    rsvpGiftsLink.style.display    = 'inline-flex';
+    section3.style.display         = 'flex';
   } else {
-    // No asiste — sección 3 NO se muestra
-    section3.classList.remove('unlocked');
-    section3.setAttribute('aria-hidden', 'true');
-
-    rsvpHand.src                  = 'mickeysad.png';
-    rsvpConfirmedIcon.textContent = '😢';
-    rsvpConfirmedText.innerHTML   = 'Înțelegem, ne pare rău că nu poți veni. Îți trimitem gânduri bune! 💙';
-    rsvpGiftsLink.style.display   = 'none';
+    rsvpHand.src                   = 'mickeysad.png';
+    rsvpConfirmedIcon.textContent  = '😢';
+    rsvpConfirmedText.innerHTML    = 'Înțelegem, ne pare rău că nu poți veni. Îți trimitem gânduri bune! 💙';
+    rsvpGiftsLink.style.display    = 'none';
+    section3.style.display         = 'none';
   }
 }
 
-// ── Restaurar desde localStorage al cargar ──
+// ── Restaurar desde localStorage ──
 try {
   const saved = localStorage.getItem('brianRSVP');
   if (saved) {
@@ -179,9 +160,7 @@ confirmBtn.addEventListener('click', () => {
   const data = { attending: rsvpYes.checked, name: rsvpName.value.trim() };
   localStorage.setItem('brianRSVP', JSON.stringify(data));
   applyConfirmedState(data);
-
   if (data.attending) {
-    // Scroll al final después de que section3 aparezca
     setTimeout(() => {
       window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     }, 400);
@@ -194,10 +173,12 @@ rsvpGiftsLink.addEventListener('click', (e) => {
   window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 });
 
-// ── Bloquear acceso directo a sección 3 por hash ──
+// ── Bloquear hash directo a sección 3 ──
 window.addEventListener('hashchange', () => {
-  if (window.location.hash === '#section3' && !section3.classList.contains('unlocked')) {
+  if (window.location.hash === '#section3' && section3.style.display !== 'flex') {
     history.replaceState(null, '', '#section2');
     document.getElementById('section2').scrollIntoView({ behavior: 'smooth' });
   }
 });
+
+}); // fin DOMContentLoaded
