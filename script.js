@@ -202,12 +202,10 @@ rsvpGiftsLink.addEventListener('click', (e) => {
   window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 });
 
-// ── Bloquear hash directo a sección 3 ──
-window.addEventListener('hashchange', () => {
-  if (window.location.hash === '#section3' && section3.style.display !== 'flex') {
-    history.replaceState(null, '', '#section2');
-    document.getElementById('section2').scrollIntoView({ behavior: 'smooth' });
-  }
+  // ── Flecha sección 1 → sección 2 ──
+document.getElementById('scrollToSection2').addEventListener('click', (e) => {
+  e.preventDefault();
+  document.getElementById('section2').scrollIntoView({ behavior: 'smooth' });
 });
-
+  
 }); // fin DOMContentLoaded
